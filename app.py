@@ -45,9 +45,10 @@ def connect():
         )
     """)
     conn.commit()
-    if conn.execute("SELECT COUNT(*) FROM blocks").fetchone()[0] == 0:
-        add_block(conn, {"type": "GENESIS", "message": "Real Estate Registry created"})
-    return conn
+if conn.execute("SELECT COUNT(*) FROM blocks").fetchone()[0] == 0:
+    add_block(conn, {"type": "GENESIS", "message": "Real Estate Registry created"})
+    conn.commit()
+return conn
 
 
 def get_blocks(conn):
