@@ -24,9 +24,11 @@ def block_hash(index, timestamp, transaction, previous_hash):
     return hashlib.sha256(canonical_json(payload).encode("utf-8")).hexdigest()
 
 
+
 def connect():
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS properties (
             property_id TEXT PRIMARY KEY,
@@ -35,6 +37,7 @@ def connect():
             registered_at TEXT NOT NULL
         )
     """)
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS blocks (
             idx INTEGER PRIMARY KEY,
@@ -44,11 +47,17 @@ def connect():
             hash TEXT NOT NULL
         )
     """)
+
     conn.commit()
-if conn.execute("SELECT COUNT(*) FROM blocks").fetchone()[0] == 0:
-    add_block(conn, {"type": "GENESIS", "message": "Real Estate Registry created"})
-    conn.commit()
-return conn
+
+    if conn.execute("SELECT COUNT(*) FROM blocks").fetchone()[0] == 0:
+        add_block(conn, {
+            "type": "GENESIS",
+            "message": "Real Estate Registry created"
+        })
+        conn.commit()
+
+    return conn
 
 
 def get_blocks(conn):
